@@ -120,7 +120,7 @@ fn BookItem<'a>(person: ReadSignal<Person>, book: &'a Book) -> impl IntoView {
                     let (author_name, _) = signal(author.name.clone());
 
                     view! {
-                        {move || if i > 0 { ", " } else { "" }}
+                        {if i > 0 { ", " } else { "" }}
                         {
                             if author_name.read() == person.read().name {
                                 view! {
