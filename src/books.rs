@@ -1,8 +1,10 @@
 
+use leptos::prelude::*;
+
 #[derive(Clone)]
 pub struct Person {
     pub name: String,
-    pub books: Vec<Book>,
+    pub books: Vec<RwSignal<Book>>,
 }
 
 #[derive(Clone)]

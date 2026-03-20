@@ -46,19 +46,17 @@ fn HomePage() -> impl IntoView {
     let (person, _) = signal(Person {
         name: "Foo Bar".to_string(),
         books: vec![
-            Book {
+            RwSignal::new(Book {
                 title: "Book 1".to_string(),
                 year: "2020".to_string(),
                 authors: vec![
                     Author {
                         name: "Foo Bar".to_string(),
                     },
-                    Author {
-                        name: "Baz".to_string(),
-                    },
+                    Author { name: "Baz".to_string() },
                 ],
-            },
-            Book {
+            }),
+            RwSignal::new(Book {
                 title: "Book 2".to_string(),
                 year: "2020".to_string(),
                 authors: vec![
@@ -69,14 +67,14 @@ fn HomePage() -> impl IntoView {
                         name: "Foo Bar".to_string(),
                     },
                 ],
-            },
-            Book {
+            }),
+            RwSignal::new(Book {
                 title: "Book 3".to_string(),
                 year: "2023".to_string(),
                 authors: vec![Author {
                     name: "Foo Bar".to_string(),
                 }],
-            },
+            }),
         ],
     });
 
@@ -87,10 +85,9 @@ fn HomePage() -> impl IntoView {
 
 #[component]
 fn BookList(person: ReadSignal<Person>) -> impl IntoView {
-    let mut grouped: Vec<(String, Vec<&Book>)> = Vec::new();
-    let person_value = person.read();
-    for (key, chunk) in &person_value.books.iter().rev().chunk_by(|b| b.year.clone()) {
-        grouped.push((key.clone(), chunk.collect()));
+    let mut grouped: Vec<(String, Vec<ReadSignal<Book>>)> = Vec::new();
+    for (key, chunk) in &person.read().books.iter().rev().chunk_by(|b| b.read().year.clone()) {
+        grouped.push((key.clone(), chunk.map(|b| b.read_only()).collect()));
     }
 
     view! {
@@ -110,19 +107,19 @@ fn BookList(person: ReadSignal<Person>) -> impl IntoView {
 }
 
 #[component]
-fn BookItem<'a>(person: ReadSignal<Person>, book: &'a Book) -> impl IntoView {
+fn BookItem(person: ReadSignal<Person>, book: ReadSignal<Book>) -> impl IntoView {
     view! {
         <div>
-            <div>Title: {book.title.clone()}</div>
+            <div>Title: {book.read().title.clone()}</div>
             <div>Authors:
             {
-                book.authors.iter().enumerate().map(|(i, author)| {
-                    let (author_name, _) = signal(author.name.clone());
+                book.read().authors.iter().enumerate().map(|(i, author)| {
+                    let author_name = author.name.clone();
 
                     view! {
                         {if i > 0 { ", " } else { "" }}
                         {
-                            if author_name.read() == person.read().name {
+                            if author.name == person.read().name {
                                 view! {
                                     <span style="text-decoration: underline">
                                         {author_name}
