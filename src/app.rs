@@ -93,19 +93,17 @@ fn BookList(person: Person) -> impl IntoView {
                 .into_iter()
                 .map(|(year, books)| {
                     view! {
-                        <>
-                            <li class="year">{year}</li>
-                            {books
-                                .into_iter()
-                                .map(|book| {
-                                    view! {
-                                        <li class="entry">
-                                            <BookItem person=&person book=book />
-                                        </li>
-                                    }
-                                })
-                                .collect_view()}
-                        </>
+                        <li class="year">{year}</li>
+                        {books
+                            .into_iter()
+                            .map(|book| {
+                                view! {
+                                    <li class="entry">
+                                        <BookItem person=&person book=book />
+                                    </li>
+                                }
+                            })
+                            .collect_view()}
                     }
                 })
                 .collect_view()}
