@@ -3,10 +3,15 @@ use leptos::prelude::*;
 use leptos_meta::{provide_meta_context, MetaTags};
 use leptos_router::{
     components::{Route, Router, Routes},
-    StaticSegment,
+    hooks::use_params_map,
+    ParamSegment, StaticSegment,
 };
 
-use crate::books::{Author, Book, Person};
+use crate::{
+    books::{Book, Person},
+    data::load_person,
+    nav::Nav,
+};
 
 pub fn shell(options: LeptosOptions) -> impl IntoView {
     view! {
@@ -32,9 +37,11 @@ pub fn App() -> impl IntoView {
 
     view! {
         <Router>
+            <Nav />
             <main>
                 <Routes fallback=|| "Page not found.".into_view()>
                     <Route path=StaticSegment("") view=HomePage/>
+                    <Route path=(StaticSegment("users"), ParamSegment("key")) view=UserPage/>
                 </Routes>
             </main>
         </Router>
@@ -43,42 +50,17 @@ pub fn App() -> impl IntoView {
 
 #[component]
 fn HomePage() -> impl IntoView {
-    let (person, _) = signal(Person {
-        name: "Foo Bar".to_string(),
-        books: vec![
-            Book {
-                title: "Book 1".to_string(),
-                year: "2020".to_string(),
-                authors: vec![
-                    Author {
-                        name: "Foo Bar".to_string(),
-                    },
-                    Author {
-                        name: "Baz".to_string(),
-                    },
-                ],
-            },
-            Book {
-                title: "Book 2".to_string(),
-                year: "2020".to_string(),
-                authors: vec![
-                    Author {
-                        name: "Peter Fnord".to_string(),
-                    },
-                    Author {
-                        name: "Foo Bar".to_string(),
-                    },
-                ],
-            },
-            Book {
-                title: "Book 3".to_string(),
-                year: "2023".to_string(),
-                authors: vec![Author {
-                    name: "Foo Bar".to_string(),
-                }],
-            },
-        ],
-    });
+    view! {
+        <div>HomePage</div>
+    }
+}
+
+#[component]
+fn UserPage() -> impl IntoView {
+    let params = use_params_map();
+    let key = params.read().get("key").unwrap_or_default();
+    let person = load_person(key);
+    let (person, _) = signal(person);
 
     view! {
         <BookList person={person} />
