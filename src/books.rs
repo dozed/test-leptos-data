@@ -13,6 +13,7 @@ pub struct Book {
     pub title: String,
     pub year: String,
     pub authors: Vec<Author>,
+    pub publisher: String,
 }
 
 #[derive(Clone, Serialize, Deserialize)]

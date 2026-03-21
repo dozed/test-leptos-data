@@ -136,6 +136,7 @@ fn BookItem<'a>(person: &'a Person, book: &'a Book) -> impl IntoView {
                     })
                     .collect_view()}
             </div>
+            <div>Publisher: {book.publisher.clone()}</div>
         </div>
     }
 }

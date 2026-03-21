@@ -17,6 +17,7 @@ pub fn load_person(key: String) -> Person {
                             name: "Baz".to_string(),
                         },
                     ],
+                    publisher: "A".to_string(),
                 },
                 Book {
                     title: "Book 2".to_string(),
@@ -29,6 +30,7 @@ pub fn load_person(key: String) -> Person {
                             name: "Foo Bar".to_string(),
                         },
                     ],
+                    publisher: "B".to_string(),
                 },
                 Book {
                     title: "Book 3".to_string(),
@@ -36,6 +38,7 @@ pub fn load_person(key: String) -> Person {
                     authors: vec![Author {
                         name: "Foo Bar".to_string(),
                     }],
+                    publisher: "A".to_string(),
                 },
             ],
         },
@@ -49,6 +52,7 @@ pub fn load_person(key: String) -> Person {
                     authors: vec![Author {
                         name: "Baz".to_string(),
                     }],
+                    publisher: "A".to_string(),
                 },
                 Book {
                     title: "Book 1".to_string(),
@@ -61,6 +65,7 @@ pub fn load_person(key: String) -> Person {
                             name: "Baz".to_string(),
                         },
                     ],
+                    publisher: "B".to_string(),
                 },
             ],
         },
