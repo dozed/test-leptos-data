@@ -2,7 +2,7 @@ use itertools::Itertools;
 use leptos::prelude::*;
 use leptos_meta::{provide_meta_context, MetaTags};
 use leptos_router::{
-    components::{Route, Router, Routes},
+    components::{A, Route, Router, Routes},
     hooks::use_params_map,
     ParamSegment, StaticSegment,
 };
@@ -71,9 +71,13 @@ fn UserPage() -> impl IntoView {
                 view! { "Loading..." }
             }>
                 {move || Suspend::new(async move {
-                    let person = person.await;
-                    // let (person, _) = signal(person);
-                    view! { <BookList person=person /> }
+                    match person.await {
+                        Some(person) => {
+                            // let (person, _) = signal(person);
+                            view! { <BookList person=person /> }.into_any()
+                        },
+                        None => view! { <div>Not found</div> }.into_any()
+                    }
                 })}
             </Suspense>
         </div>
@@ -130,7 +134,12 @@ fn BookItem<'a>(person: &'a Person, book: &'a Book) -> impl IntoView {
                             {if author_name == person.name {
                                 view! { <span style="text-decoration: underline">{author_name}</span> }.into_any()
                             } else {
-                                view! { <span>{author_name}</span> }.into_any()
+                                view! {
+                                    <span>
+                                        <A href=format!("/users/{key}", key = author.key)>{author_name}</A>
+                                    </span>
+                                }
+                                    .into_any()
                             }}
                         }
                     })

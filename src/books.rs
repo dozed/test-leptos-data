@@ -18,5 +18,6 @@ pub struct Book {
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Author {
+    pub key: String,
     pub name: String,
 }
