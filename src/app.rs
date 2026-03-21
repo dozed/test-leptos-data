@@ -74,9 +74,10 @@ fn UserPage() -> impl IntoView {
                     match person.await {
                         Some(person) => {
                             // let (person, _) = signal(person);
-                            view! { <BookList person=person /> }.into_any()
-                        },
-                        None => view! { <div>Not found</div> }.into_any()
+                            view! { <BookList person=person /> }
+                                .into_any()
+                        }
+                        None => view! { <div>Not found</div> }.into_any(),
                     }
                 })}
             </Suspense>
