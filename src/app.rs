@@ -73,7 +73,7 @@ fn UserPage() -> impl IntoView {
             view! { "Loading..." }
         }>
             {move || Suspend::new(async move {
-                let person = person.await.clone();
+                let person = person.await;
                 // let (person, _) = signal(person);
                 view! {
                     <BookList person=person />
