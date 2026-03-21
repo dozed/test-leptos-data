@@ -82,9 +82,9 @@ fn UserPage() -> impl IntoView {
 
 #[component]
 fn BookList(person: Person) -> impl IntoView {
-    let mut grouped: Vec<(String, Vec<&Book>)> = Vec::new();
+    let mut grouped = Vec::new();
     for (key, chunk) in &person.books.iter().rev().chunk_by(|b| b.year.clone()) {
-        grouped.push((key, chunk.collect()));
+        grouped.push((key, chunk.collect_vec()));
     }
 
     view! {
