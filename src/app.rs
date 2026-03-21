@@ -128,7 +128,7 @@ fn BookItem<'a>(person: &'a Person, book: &'a Book) -> impl IntoView {
                         let author_name = author.name.clone();
 
                         view! {
-                            {if i > 0 { ", " } else { "" }}
+                            {(i > 0).then(|| ", ")}
                             {if author_name == person.name {
                                 view! { <span style="text-decoration: underline">{author_name}</span> }.into_any()
                             } else {
