@@ -74,7 +74,7 @@ fn UserPage() -> impl IntoView {
         }>
             {move || Suspend::new(async move {
                 let person = person.await.clone();
-                let (person, _) = signal(person);
+                // let (person, _) = signal(person);
                 view! {
                     <BookList person=person />
                 }
@@ -85,10 +85,9 @@ fn UserPage() -> impl IntoView {
 }
 
 #[component]
-fn BookList(person: ReadSignal<Person>) -> impl IntoView {
+fn BookList(person: Person) -> impl IntoView {
     let mut grouped: Vec<(String, Vec<&Book>)> = Vec::new();
-    let person_value = person.read();
-    for (key, chunk) in &person_value.books.iter().rev().chunk_by(|b| b.year.clone()) {
+    for (key, chunk) in &person.books.iter().rev().chunk_by(|b| b.year.clone()) {
         grouped.push((key.clone(), chunk.collect()));
     }
 
@@ -99,7 +98,7 @@ fn BookList(person: ReadSignal<Person>) -> impl IntoView {
                     <li class="year">{year}</li>
                     {books.into_iter().map(|book| view! {
                         <li class="entry">
-                            <BookItem person={person} book={book} />
+                            <BookItem person={&person} book={book} />
                         </li>
                     }).collect_view()}
                 </>
@@ -109,19 +108,19 @@ fn BookList(person: ReadSignal<Person>) -> impl IntoView {
 }
 
 #[component]
-fn BookItem<'a>(person: ReadSignal<Person>, book: &'a Book) -> impl IntoView {
+fn BookItem<'a>(person: &'a Person, book: &'a Book) -> impl IntoView {
     view! {
         <div>
             <div>Title: {book.title.clone()}</div>
             <div>Authors:
             {
                 book.authors.iter().enumerate().map(|(i, author)| {
-                    let (author_name, _) = signal(author.name.clone());
+                    let author_name = author.name.clone();
 
                     view! {
                         {if i > 0 { ", " } else { "" }}
                         {
-                            if author_name.read() == person.read().name {
+                            if author_name == person.name {
                                 view! {
                                     <span style="text-decoration: underline">
                                         {author_name}
