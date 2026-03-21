@@ -58,12 +58,29 @@ fn HomePage() -> impl IntoView {
 #[component]
 fn UserPage() -> impl IntoView {
     let params = use_params_map();
-    let key = params.read().get("key").unwrap_or_default();
-    let person = load_person(key);
-    let (person, _) = signal(person);
+    // let key = params.read().get("key").unwrap_or_default();
+    // let person = load_person(key);
+    // let (person, _) = signal(person);
+
+    let person = Resource::new(
+        move || params.read().get("key").unwrap_or_default(),
+        move |key| async move { load_person(key) },
+    );
 
     view! {
-        <BookList person={person} />
+        <div>
+        <Suspense fallback=|| {
+            view! { "Loading..." }
+        }>
+            {move || Suspend::new(async move {
+                let person = person.await.clone();
+                let (person, _) = signal(person);
+                view! {
+                    <BookList person=person />
+                }
+            })}
+        </Suspense>
+        </div>
     }
 }
 
