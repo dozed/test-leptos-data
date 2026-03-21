@@ -18,14 +18,14 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
         <!DOCTYPE html>
         <html lang="en">
             <head>
-                <meta charset="utf-8"/>
-                <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <meta charset="utf-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <AutoReload options=options.clone() />
-                <HydrationScripts options/>
-                <MetaTags/>
+                <HydrationScripts options />
+                <MetaTags />
             </head>
             <body>
-                <App/>
+                <App />
             </body>
         </html>
     }
@@ -40,8 +40,8 @@ pub fn App() -> impl IntoView {
             <Nav />
             <main>
                 <Routes fallback=|| "Page not found.".into_view()>
-                    <Route path=StaticSegment("") view=HomePage/>
-                    <Route path=(StaticSegment("users"), ParamSegment("key")) view=UserPage/>
+                    <Route path=StaticSegment("") view=HomePage />
+                    <Route path=(StaticSegment("users"), ParamSegment("key")) view=UserPage />
                 </Routes>
             </main>
         </Router>
@@ -50,9 +50,7 @@ pub fn App() -> impl IntoView {
 
 #[component]
 fn HomePage() -> impl IntoView {
-    view! {
-        <div>HomePage</div>
-    }
+    view! { <div>HomePage</div> }
 }
 
 #[component]
@@ -69,17 +67,15 @@ fn UserPage() -> impl IntoView {
 
     view! {
         <div>
-        <Suspense fallback=|| {
-            view! { "Loading..." }
-        }>
-            {move || Suspend::new(async move {
-                let person = person.await;
-                // let (person, _) = signal(person);
-                view! {
-                    <BookList person=person />
-                }
-            })}
-        </Suspense>
+            <Suspense fallback=|| {
+                view! { "Loading..." }
+            }>
+                {move || Suspend::new(async move {
+                    let person = person.await;
+                    // let (person, _) = signal(person);
+                    view! { <BookList person=person /> }
+                })}
+            </Suspense>
         </div>
     }
 }
@@ -93,16 +89,26 @@ fn BookList(person: Person) -> impl IntoView {
 
     view! {
         <ul>
-            {grouped.into_iter().map(|(year, books)| view! {
-                <>
-                    <li class="year">{year}</li>
-                    {books.into_iter().map(|book| view! {
-                        <li class="entry">
-                            <BookItem person={&person} book={book} />
-                        </li>
-                    }).collect_view()}
-                </>
-            }).collect_view()}
+            {grouped
+                .into_iter()
+                .map(|(year, books)| {
+                    view! {
+                        <>
+                            <li class="year">{year}</li>
+                            {books
+                                .into_iter()
+                                .map(|book| {
+                                    view! {
+                                        <li class="entry">
+                                            <BookItem person=&person book=book />
+                                        </li>
+                                    }
+                                })
+                                .collect_view()}
+                        </>
+                    }
+                })
+                .collect_view()}
         </ul>
     }
 }
@@ -112,31 +118,25 @@ fn BookItem<'a>(person: &'a Person, book: &'a Book) -> impl IntoView {
     view! {
         <div>
             <div>Title: {book.title.clone()}</div>
-            <div>Authors:
-            {
-                book.authors.iter().enumerate().map(|(i, author)| {
-                    let author_name = author.name.clone();
+            <div>
+                Authors:
+                {book
+                    .authors
+                    .iter()
+                    .enumerate()
+                    .map(|(i, author)| {
+                        let author_name = author.name.clone();
 
-                    view! {
-                        {if i > 0 { ", " } else { "" }}
-                        {
-                            if author_name == person.name {
-                                view! {
-                                    <span style="text-decoration: underline">
-                                        {author_name}
-                                    </span>
-                                }.into_any()
+                        view! {
+                            {if i > 0 { ", " } else { "" }}
+                            {if author_name == person.name {
+                                view! { <span style="text-decoration: underline">{author_name}</span> }.into_any()
                             } else {
-                                view! {
-                                    <span>
-                                        {author_name}
-                                    </span>
-                                }.into_any()
-                            }
+                                view! { <span>{author_name}</span> }.into_any()
+                            }}
                         }
-                    }
-                }).collect_view()
-            }
+                    })
+                    .collect_view()}
             </div>
         </div>
     }
